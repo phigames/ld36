@@ -14,8 +14,13 @@ class Resources {
     soundsLoaded = 0;
     loadImage('gear_4');
     loadImage('gear_5');
+    loadImage('gear_8');
     loadImage('chord');
-    loadSound('strum');
+    loadImage('drum');
+    loadSound('chord_low');
+    loadSound('chord_high');
+    loadSound('drum_low');
+    loadSound('drum_high');
   }
 
   static void loadImage(String key) {
