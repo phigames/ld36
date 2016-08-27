@@ -27,14 +27,14 @@ class Instrument extends Gear {
   }
 
   void updateMore(num time) {
-    if (rotation.abs() - lastPlayRotation >= playRotationInterval) {
+    if ((rotation - lastPlayRotation).abs() >= playRotationInterval) {
       play();
-      lastPlayRotation += playRotationInterval;
+      lastPlayRotation += playRotationInterval * rotationSpeed.sign;
     }
   }
 
   void drawMore() {
-    bufferContext.drawImage(instrumentImage, positionX - imageOffsetX, positionY - imageOffsetY);
+    bufferContext.drawImage(instrumentImage, positionX - imageOffsetX + currentLevel.offsetX, positionY - imageOffsetY + currentLevel.offsetY);
   }
 
 }

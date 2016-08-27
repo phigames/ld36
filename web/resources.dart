@@ -17,6 +17,7 @@ class Resources {
     loadImage('gear_8');
     loadImage('chord');
     loadImage('drum');
+    loadImage('trash');
     loadSound('chord_low');
     loadSound('chord_high');
     loadSound('drum_low');

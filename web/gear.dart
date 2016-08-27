@@ -7,9 +7,9 @@ class Gear {
   num rotation;
   num rotationSpeed;
   num radius;
+  Gear parent;
   List<Gear> gluedGears;
   List<Gear> connectedGears;
-  bool jammed;
   int highlight;
   ImageElement image;
   num imageCenterX, imageCenterY;
@@ -97,8 +97,33 @@ class Gear {
     }
   }
 
+  Gear getIntersectingGear(num x, num y) {
+    num dX = x - positionX;
+    num dY = y - positionY;
+    num distance = sqrt(dX * dX + dY * dY);
+    num maxDistance = radius;
+    if (distance < maxDistance) {
+      return this;
+    } else {
+      for (int i = 0; i < gluedGears.length; i++) {
+        Gear child = gluedGears[i].getIntersectingGear(x, y);
+        if (child != null) {
+          return child;
+        }
+      }
+      for (int i = 0; i < connectedGears.length; i++) {
+        Gear child = connectedGears[i].getIntersectingGear(x, y);
+        if (child != null) {
+          return child;
+        }
+      }
+      return null;
+    }
+  }
+
   void glue(Gear placing) {
     gluedGears.add(placing);
+    placing.parent = this;
     placing.positionX = positionX;
     placing.positionY = positionY;
     placing.rotationSpeed = rotationSpeed;
@@ -106,6 +131,7 @@ class Gear {
 
   void connect(Gear placing) {
     connectedGears.add(placing);
+    placing.parent = this;
     num dX = placing.positionX - positionX;
     num dY = placing.positionY - positionY;
     num distance = sqrt(dX * dX + dY * dY);
@@ -115,33 +141,15 @@ class Gear {
     placing.rotationSpeed = -rotationSpeed * number / placing.number;
   }
 
-  /*void connect(Gear gear) {
-    if (!jammed) {
-      if (gear.rotationSpeed == 0) { // this == driving gear
-        connectedGears.add(gear);
-      } else if (this.rotationSpeed == 0) { // this == driven gear
-        rotationSpeed = -gear.rotationSpeed * gear.number / number;
-        connectedGears.add(gear);
-      } else {
-        clearConnections();
-        jammed = true;
-      }
-    }
-  }*/
-
-  void updateConnectedGears() {
+  void updateChildren() {
     for (int i = 0; i < connectedGears.length; i++) {
-      //if (connectedGears[i].rotationSpeed == 0) { // this == driving gear
-        connectedGears[i].rotationSpeed = -rotationSpeed * number / connectedGears[i].number;
-        connectedGears[i].updateConnectedGears();
-      //}
+      connectedGears[i].rotationSpeed = -rotationSpeed * number / connectedGears[i].number;
+      connectedGears[i].updateChildren();
     }
-  }
-
-  void clearConnections() {
-    connectedGears.clear();
-    rotationSpeed = 0;
-    jammed = false;
+    for (int i = 0; i < gluedGears.length; i++) {
+      gluedGears[i].rotationSpeed = -rotationSpeed * number / connectedGears[i].number;
+      gluedGears[i].updateChildren();
+    }
   }
 
   void update(num time) {
@@ -166,14 +174,13 @@ class Gear {
       case 2:
         bufferContext.globalAlpha = 0.2;
     }
-    bufferContext.translate(positionX, positionY);
+    bufferContext.translate(positionX + currentLevel.offsetX, positionY + currentLevel.offsetY);
     bufferContext.rotate(rotation);
     bufferContext.drawImage(image, -imageCenterX, -imageCenterY);
     bufferContext.restore();
     drawMore();
     for (int i = 0; i < gluedGears.length; i++) {
       gluedGears[i].draw();
-      print('glued');
     }
     for (int i = 0; i < connectedGears.length; i++) {
       connectedGears[i].draw();

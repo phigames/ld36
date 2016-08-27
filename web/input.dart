@@ -3,7 +3,8 @@ part of ld36;
 class Input {
 
   static num mouseX, mouseY;
-  static bool mouseDown;
+  static bool leftMouseDown, rightMouseDown;
+  static bool escDown;
 
   static void initialize() {
     mouseX = 0;
@@ -20,13 +21,29 @@ class Input {
 
   static void onMouseDown(MouseEvent event) {
     if (event.button == 0) {
-      mouseDown = true;
+      leftMouseDown = true;
+    } else if (event.button == 2) {
+      rightMouseDown = true;
     }
   }
 
   static void onMouseUp(MouseEvent event) {
     if (event.button == 0) {
-      mouseDown = false;
+      leftMouseDown = false;
+    } else if (event.button == 2) {
+      rightMouseDown = false;
+    }
+  }
+
+  static void onKeyDown(KeyboardEvent event) {
+    if (event.keyCode == KeyCode.ESC) {
+      escDown = true;
+    }
+  }
+
+  static void onKeyUp(KeyboardEvent event) {
+    if (event.keyCode == KeyCode.ESC) {
+      escDown = false;
     }
   }
 

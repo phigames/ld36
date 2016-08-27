@@ -19,17 +19,26 @@ Level currentLevel;
 
 void main() {
   canvas = querySelector('#canvas');
-  canvasWidth = canvas.width;
-  canvasHeight = canvas.height;
   canvasContext = canvas.context2D;
   buffer = new CanvasElement(width: canvasWidth, height: canvasHeight);
   bufferContext = buffer.context2D;
+  updateCanvasSize();
+  window.onResize.listen((e) => updateCanvasSize());
   audioContext = new AudioContext();
   timePassed = -1;
   Input.initialize();
   Resources.load();
   currentLevel = new Level();
   requestFrame();
+}
+
+void updateCanvasSize() {
+  canvasWidth = window.innerWidth;
+  canvasHeight = window.innerHeight;
+  canvas.width = canvasWidth;
+  canvas.height = canvasHeight;
+  buffer.width = canvasWidth;
+  buffer.height = canvasHeight;
 }
 
 void update(num time) {
