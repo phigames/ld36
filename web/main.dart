@@ -32,7 +32,7 @@ void main() {
   Input.initialize();
   Resources.load();
   random = new Random();
-  gameState = new GameStateMenu();
+  gameState = new GameStateLoading();
   requestFrame();
 }
 

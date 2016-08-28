@@ -5,7 +5,7 @@ class Resources {
   static Map<String, ImageElement> images;
   static Map<String, AudioElement> sounds;
   static int imagesLoaded, soundsLoaded;
-  static bool done;
+  static bool doneLoading;
 
   static void load() {
     images = new Map<String, ImageElement>();
@@ -51,14 +51,14 @@ class Resources {
   static void onImageLoad() {
     imagesLoaded++;
     if (imagesLoaded == images.length && soundsLoaded == sounds.length) {
-      done = true;
+      doneLoading = true;
     }
   }
 
   static void onSoundLoad() {
     soundsLoaded++;
     if (imagesLoaded == images.length && soundsLoaded == sounds.length) {
-      done = true;
+      doneLoading = true;
     }
   }
 

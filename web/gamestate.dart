@@ -8,6 +8,23 @@ abstract class GameState {
 
 }
 
+class GameStateLoading extends GameState {
+
+  void update(num time) {
+    if (Resources.doneLoading) {
+      gameState = new GameStateMenu();
+    }
+  }
+
+  void draw() {
+    bufferContext.textAlign = 'center';
+    bufferContext.font = '30px "Bree Serif"';
+    bufferContext.fillStyle = '#000000';
+    bufferContext.fillText('Loading...', canvasWidth / 2, canvasHeight / 2);
+  }
+
+}
+
 class GameStateMenu extends GameState {
 
   MenuButton introButton, freestyleButton, challengeButton, creditsButton;
