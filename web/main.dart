@@ -4,6 +4,7 @@ import 'dart:html';
 import 'dart:math';
 import 'dart:web_audio';
 
+part 'gamestate.dart';
 part 'level.dart';
 part 'gear.dart';
 part 'instrument.dart';
@@ -15,6 +16,8 @@ CanvasElement canvas, buffer;
 CanvasRenderingContext2D canvasContext, bufferContext;
 AudioContext audioContext;
 num timePassed;
+Random random;
+GameState gameState;
 Level currentLevel;
 
 void main() {
@@ -28,13 +31,22 @@ void main() {
   timePassed = -1;
   Input.initialize();
   Resources.load();
-  currentLevel = new Level();
+  random = new Random();
+  gameState = new GameStateMenu();
   requestFrame();
 }
 
 void updateCanvasSize() {
-  canvasWidth = window.innerWidth;
-  canvasHeight = window.innerHeight;
+  if (window.innerWidth > 600) {
+    canvasWidth = window.innerWidth;
+  } else {
+    canvasWidth = 600;
+  }
+  if (window.innerHeight > 300) {
+    canvasHeight = window.innerHeight;
+  } else {
+    canvasHeight = 300;
+  }
   canvas.width = canvasWidth;
   canvas.height = canvasHeight;
   buffer.width = canvasWidth;
@@ -42,12 +54,12 @@ void updateCanvasSize() {
 }
 
 void update(num time) {
-  currentLevel.update(time);
+  gameState.update(time);
 }
 
 void draw() {
   bufferContext.clearRect(0, 0, canvasWidth, canvasHeight);
-  currentLevel.draw();
+  gameState.draw();
   canvasContext.clearRect(0, 0, canvasWidth, canvasHeight);
   canvasContext.drawImage(buffer, 0, 0);
 }

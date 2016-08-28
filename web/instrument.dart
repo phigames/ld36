@@ -2,16 +2,27 @@ part of ld36;
 
 class Instrument extends Gear {
 
+  String type;
   ImageElement instrumentImage;
   num imageOffsetX, imageOffsetY;
   AudioElement sound1, sound2;
   num playRotationInterval;
   num lastPlayRotation;
 
-  Instrument(num positionX, num positionY, String imageKey, this.imageOffsetX, this.imageOffsetY, String sound1Key, String sound2Key) : super(5, positionX, positionY) {
-    instrumentImage = Resources.images[imageKey];
-    sound1 = Resources.sounds[sound1Key].clone(false);
-    sound2 = Resources.sounds[sound2Key].clone(false);
+  Instrument(this.type, num positionX, num positionY) : super(5, positionX, positionY) {
+    instrumentImage = Resources.images[type];
+    if (type == 'chord') {
+      imageOffsetX = 16;
+      imageOffsetY = 72;
+    } else if (type == 'drum') {
+      imageOffsetX = 39;
+      imageOffsetY = 87;
+    } else if (type == 'box') {
+      imageOffsetX = 62;
+      imageOffsetY = 73;
+    }
+    sound1 = Resources.sounds['${type}_low'].clone(false);
+    sound2 = Resources.sounds['${type}_high'].clone(false);
     playRotationInterval = PI * 2 / 5;
     lastPlayRotation = 0;
   }

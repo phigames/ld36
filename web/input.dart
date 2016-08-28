@@ -12,6 +12,8 @@ class Input {
     canvas.onMouseMove.listen(onMouseMove);
     canvas.onMouseDown.listen(onMouseDown);
     canvas.onMouseUp.listen(onMouseUp);
+    window.onKeyDown.listen(onKeyDown);
+    window.onKeyUp.listen(onKeyUp);
   }
 
   static void onMouseMove(MouseEvent event) {

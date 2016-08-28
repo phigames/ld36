@@ -31,6 +31,10 @@ class Gear {
         imageCenterX = 48;
         imageCenterY = 46;
         break;
+      case 6:
+        imageCenterX = 57;
+        imageCenterY = 57;
+        break;
       case 8:
         imageCenterX = 75;
         imageCenterY = 71;
@@ -98,6 +102,12 @@ class Gear {
   }
 
   Gear getIntersectingGear(num x, num y) {
+    for (int i = 0; i < gluedGears.length; i++) {
+      Gear child = gluedGears[i].getIntersectingGear(x, y);
+      if (child != null) {
+        return child;
+      }
+    }
     num dX = x - positionX;
     num dY = y - positionY;
     num distance = sqrt(dX * dX + dY * dY);
@@ -105,12 +115,6 @@ class Gear {
     if (distance < maxDistance) {
       return this;
     } else {
-      for (int i = 0; i < gluedGears.length; i++) {
-        Gear child = gluedGears[i].getIntersectingGear(x, y);
-        if (child != null) {
-          return child;
-        }
-      }
       for (int i = 0; i < connectedGears.length; i++) {
         Gear child = connectedGears[i].getIntersectingGear(x, y);
         if (child != null) {
@@ -119,6 +123,20 @@ class Gear {
       }
       return null;
     }
+  }
+
+  List<Instrument> getInstruments() {
+    List<Instrument> instruments = new List<Instrument>();
+    if (this is Instrument) {
+      instruments.add(this as Instrument);
+    }
+    for (int i = 0; i < gluedGears.length; i++) {
+      instruments.addAll(gluedGears[i].getInstruments());
+    }
+    for (int i = 0; i < connectedGears.length; i++) {
+      instruments.addAll(connectedGears[i].getInstruments());
+    }
+    return instruments;
   }
 
   void glue(Gear placing) {
@@ -147,9 +165,24 @@ class Gear {
       connectedGears[i].updateChildren();
     }
     for (int i = 0; i < gluedGears.length; i++) {
-      gluedGears[i].rotationSpeed = -rotationSpeed * number / connectedGears[i].number;
+      gluedGears[i].rotationSpeed = -rotationSpeed * number / gluedGears[i].number;
       gluedGears[i].updateChildren();
     }
+  }
+
+  void releaseChildren() {
+    currentLevel.looseGears.addAll(gluedGears);
+    for (int i = 0; i < gluedGears.length; i++) {
+      gluedGears[i].parent = null;
+      gluedGears[i].releaseChildren();
+    }
+    gluedGears.clear();
+    currentLevel.looseGears.addAll(connectedGears);
+    for (int i = 0; i < connectedGears.length; i++) {
+      connectedGears[i].parent = null;
+      connectedGears[i].releaseChildren();
+    }
+    connectedGears.clear();
   }
 
   void update(num time) {
