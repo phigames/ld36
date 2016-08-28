@@ -12,6 +12,8 @@ class Resources {
     sounds = new Map<String, AudioElement>();
     imagesLoaded = 0;
     soundsLoaded = 0;
+    loadImage('temple');
+    loadImage('squares');
     loadImage('gear_4');
     loadImage('gear_5');
     loadImage('gear_6');
@@ -21,6 +23,7 @@ class Resources {
     loadImage('box');
     loadImage('trash');
     loadImage('play');
+    loadImage('help');
     loadSound('chord_low');
     loadSound('chord_high');
     loadSound('drum_low');

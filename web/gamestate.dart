@@ -25,7 +25,7 @@ class GameStateMenu extends GameState {
     challengeButton.update();
     creditsButton.update();
     if (introButton.pressed) {
-
+      gameState = new GameStateIntro();
       introButton.pressed = false;
     } else if (freestyleButton.pressed) {
       gameState = new GameStateFreestyle();
@@ -34,16 +34,78 @@ class GameStateMenu extends GameState {
       gameState = new GameStateChallenge();
       challengeButton.pressed = false;
     } else if (creditsButton.pressed) {
-      //gameState = new GameStateCredits();
+      gameState = new GameStateCredits();
       creditsButton.pressed = false;
     }
   }
 
   void draw() {
+    bufferContext.textAlign = 'center';
+    bufferContext.font = '60px "Bree Serif"';
+    bufferContext.fillStyle = '#444444';
+    bufferContext.fillText('Sounds of Samos', canvasWidth / 2, canvasHeight / 2 - 180);
     introButton.draw();
     freestyleButton.draw();
     challengeButton.draw();
     creditsButton.draw();
+    bufferContext.font = '15px "Bree Serif"';
+    bufferContext.fillStyle = '#000000';
+    bufferContext.fillText('made in 48h for Ludum Dare 36', canvasWidth / 2, canvasHeight / 2 + 170);
+  }
+
+}
+
+class GameStateIntro extends GameState {
+
+  ImageElement templeImage, squaresImage, gear1Image, gear2Image, gear3Image;
+  num timer;
+
+  GameStateIntro() {
+    templeImage = Resources.images['temple'];
+    squaresImage = Resources.images['squares'];
+    gear1Image = Resources.images['gear_8'];
+    gear2Image = Resources.images['gear_5'];
+    gear3Image = Resources.images['gear_4'];
+    timer = 0;
+  }
+
+  void update(num time) {
+    timer += time / 1000;
+    if (Input.leftMouseDown) {
+      gameState = new GameStateMenu();
+      Input.leftMouseDown = false;
+    }
+  }
+
+  void draw() {
+    bufferContext.save();
+    bufferContext.globalAlpha = 0.5;
+    bufferContext.drawImage(templeImage, canvasWidth / 2 - templeImage.naturalWidth / 2, canvasHeight / 2 - templeImage.naturalHeight / 2);
+    bufferContext.globalAlpha = max(0, min(timer % 10 / 10, 1 - timer % 10 / 10)) / 2;
+    bufferContext.drawImage(squaresImage, canvasWidth / 2 - 400 + sin(timer) * 80, canvasHeight / 2 + 400 - (timer % 10) * 80);
+    bufferContext.globalAlpha = max(0, min((timer + 3) % 10 / 10, 1 - (timer + 3) % 10 / 10)) / 2;
+    bufferContext.drawImage(gear1Image, canvasWidth / 2 + 200 + sin(timer + 3) * 80, canvasHeight / 2 + 200 - ((timer + 3) % 10) * 80);
+    bufferContext.drawImage(gear2Image, canvasWidth / 2 + 300 + sin(timer + 3) * 80, canvasHeight / 2 + 300 - ((timer + 3) % 10) * 80);
+    bufferContext.drawImage(gear3Image, canvasWidth / 2 + 145 + sin(timer + 3) * 80, canvasHeight / 2 + 250 - ((timer + 3) % 10) * 80);
+    bufferContext.restore();
+    bufferContext.textAlign = 'center';
+    bufferContext.font = '20px "Bree Serif"';
+    bufferContext.fillStyle = '#000000';
+    bufferContext.fillText('Thousands of years ago, philosophers in Samos', canvasWidth / 2, canvasHeight / 2 - 250, canvasWidth);
+    bufferContext.fillText('reinvented mathematics and science.', canvasWidth / 2, canvasHeight / 2 - 220, canvasWidth);
+    bufferContext.fillText('The concepts and methods they developed are still being used today.', canvasWidth / 2, canvasHeight / 2 - 180, canvasWidth);
+    bufferContext.font = '25px "Bree Serif"';
+    bufferContext.fillText('However, one ancient invention has been long forgotten.', canvasWidth / 2, canvasHeight / 2 - 130, canvasWidth);
+    bufferContext.font = '20px "Bree Serif"';
+    bufferContext.fillText('It is the most stunning piece of technology an archaeologist has ever laid eyes on.', canvasWidth / 2, canvasHeight / 2 - 60, canvasWidth);
+    bufferContext.font = '40px "Bree Serif"';
+    bufferContext.fillText('The world\'s first loop station.', canvasWidth / 2, canvasHeight / 2 + 50, canvasWidth);
+    bufferContext.font = '20px "Bree Serif"';
+    bufferContext.fillText('And now you are the chosen one to bring it back to life again.', canvasWidth / 2, canvasHeight / 2 + 150, canvasWidth);
+    bufferContext.font = '10px "Bree Serif"';
+    bufferContext.fillText('(Better be careful, that thing costs a f***ing fortune...)', canvasWidth / 2, canvasHeight / 2 + 200, canvasWidth);
+    bufferContext.font = '20px "Bree Serif"';
+    bufferContext.fillText('Click to continue.', canvasWidth / 2, canvasHeight / 2 + 288, canvasWidth);
   }
 
 }
@@ -52,12 +114,16 @@ class GameStateFreestyle extends GameState {
 
   MenuButton resumeButton, returnButton;
   bool menuOpened;
+  bool helpOpened;
+  ImageElement helpImage;
 
   GameStateFreestyle() {
     currentLevel = new Level(false);
     resumeButton = new MenuButton(-200, -60, 400, 50, '#888888', '#555555', '#CCCCCC', 'Resume');
     returnButton = new MenuButton(-200, 10, 400, 50, '#888888', '#555555', '#CCCCCC', 'Return to menu');
     menuOpened = false;
+    helpOpened = false;
+    helpImage = Resources.images['help'];
   }
 
   void update(num time) {
@@ -81,6 +147,17 @@ class GameStateFreestyle extends GameState {
       }
     } else {
       currentLevel.update(time);
+      if (!helpOpened) {
+        if (Input.leftMouseDown && Input.mouseX > canvasWidth - 83 && Input.mouseX < canvasWidth - 10 &&
+            Input.mouseY > 10 && Input.mouseY < 82) {
+          helpOpened = true;
+          Input.leftMouseDown = false;
+        }
+      } else if (Input.leftMouseDown && Input.mouseX > canvasWidth - 83 && Input.mouseX < canvasWidth - 10 &&
+          Input.mouseY > 10 && Input.mouseY < 82) {
+        helpOpened = false;
+        Input.leftMouseDown = false;
+      }
     }
   }
 
@@ -90,6 +167,45 @@ class GameStateFreestyle extends GameState {
     if (menuOpened) {
       resumeButton.draw();
       returnButton.draw();
+    } else {
+      if (helpOpened) {
+        bufferContext.font = '20px "Bree Serif"';
+        bufferContext.fillStyle = '#000000';
+        if (currentLevel.placingGear == null) {
+          bufferContext.textAlign = 'left';
+          bufferContext.fillText('Grab more gears down here.', 50, canvasHeight - 50);
+          bufferContext.textAlign = 'right';
+          bufferContext.fillText('Grab more instruments down here.', canvasWidth - 50, canvasHeight - 50);
+        } else {
+          bufferContext.textAlign = 'right';
+          bufferContext.fillText('Throw unneeded gears in the trash.', canvasWidth - 50, canvasHeight - 110);
+        }
+        bufferContext.textAlign = 'right';
+        bufferContext.fillText('Click the question mark to hide the hints again.', canvasWidth - 100, 50);
+        bufferContext.save();
+        bufferContext.globalAlpha = 0.7;
+        bufferContext.fillStyle = '#FFFFFF';
+        bufferContext.fillRect(canvasWidth / 2 - 320, canvasHeight / 2 - 80, 640, 150);
+        bufferContext.restore();
+        bufferContext.textAlign = 'right';
+        bufferContext.fillText('Move gears around', canvasWidth / 2 - 20, canvasHeight / 2 - 50);
+        bufferContext.fillText('Move map around', canvasWidth / 2 - 20, canvasHeight / 2 - 20);
+        bufferContext.fillText('Access menu', canvasWidth / 2 - 20, canvasHeight / 2 + 10);
+        bufferContext.textAlign = 'left';
+        bufferContext.fillText('click with [left mouse button]', canvasWidth / 2 + 20, canvasHeight / 2 - 50);
+        bufferContext.fillText('drag with [right mouse button]', canvasWidth / 2 + 20, canvasHeight / 2 - 20);
+        bufferContext.fillText('[esc]', canvasWidth / 2 + 20, canvasHeight / 2 + 10);
+        bufferContext.textAlign = 'center';
+        bufferContext.fillText('It is possible to stack smaller gears on larger ones.', canvasWidth / 2, canvasHeight / 2 + 50);
+      }
+      bufferContext.save();
+      bufferContext.globalAlpha = 0.5;
+      if (helpOpened || (Input.mouseX > canvasWidth - 83 && Input.mouseX < canvasWidth - 10 &&
+          Input.mouseY > 10 && Input.mouseY < 82)) {
+        bufferContext.globalAlpha = 1;
+      }
+      bufferContext.drawImage(helpImage, canvasWidth - 83, 10);
+      bufferContext.restore();
     }
   }
 
@@ -100,6 +216,8 @@ class GameStateChallenge extends GameState {
   int currentChallenge;
   MenuButton resumeButton, returnButton;
   bool menuOpened;
+  bool helpOpened;
+  ImageElement helpImage;
   ImageElement playImage;
   List<num> playRotations;
   bool won;
@@ -111,6 +229,8 @@ class GameStateChallenge extends GameState {
     resumeButton = new MenuButton(-200, -60, 400, 50, '#888888', '#555555', '#CCCCCC', 'Resume');
     returnButton = new MenuButton(-200, 10, 400, 50, '#888888', '#555555', '#CCCCCC', 'Return to menu');
     menuOpened = false;
+    helpOpened = false;
+    helpImage = Resources.images['help'];
     playImage = Resources.images['play'];
     won = false;
   }
@@ -210,7 +330,7 @@ class GameStateChallenge extends GameState {
         }
       } else {
         if (currentLevel.challengeTargetsMet) {
-          if (Input.leftMouseDown) {
+          if (currentChallenge < 8 && Input.leftMouseDown) {
             currentLevel = new Level(true);
             newChallenge();
             Input.leftMouseDown = false;
@@ -227,6 +347,17 @@ class GameStateChallenge extends GameState {
           }
         }
         currentLevel.update(time);
+        if (!helpOpened) {
+          if (Input.leftMouseDown && Input.mouseX > canvasWidth - 83 && Input.mouseX < canvasWidth - 10 &&
+              Input.mouseY > 100 && Input.mouseY < 172) {
+            helpOpened = true;
+            Input.leftMouseDown = false;
+          }
+        } else if (Input.leftMouseDown && Input.mouseX > canvasWidth - 83 && Input.mouseX < canvasWidth - 10 &&
+            Input.mouseY > 100 && Input.mouseY < 172) {
+          helpOpened = false;
+          Input.leftMouseDown = false;
+        }
       }
     }
   }
@@ -237,6 +368,45 @@ class GameStateChallenge extends GameState {
     if (menuOpened) {
       resumeButton.draw();
       returnButton.draw();
+    } else {
+      if (helpOpened) {
+        bufferContext.font = '20px "Bree Serif"';
+        bufferContext.fillStyle = '#000000';
+        if (currentLevel.placingGear == null) {
+          bufferContext.textAlign = 'left';
+          bufferContext.fillText('Grab more gears down here.', 50, canvasHeight - 50);
+        } else if (!(currentLevel.placingGear is Instrument)) {
+          bufferContext.textAlign = 'right';
+          bufferContext.fillText('Throw unneeded gears in the trash.', canvasWidth - 50, canvasHeight - 110);
+        }
+        bufferContext.textAlign = 'right';
+        bufferContext.fillText('Listen to the rhythm you\'re trying to replicate.', canvasWidth - 140, 50);
+        bufferContext.textAlign = 'right';
+        bufferContext.fillText('Click the question mark to hide the hints again.', canvasWidth - 100, 140);
+        bufferContext.save();
+        bufferContext.globalAlpha = 0.7;
+        bufferContext.fillStyle = '#FFFFFF';
+        bufferContext.fillRect(canvasWidth / 2 - 320, canvasHeight / 2 - 80, 640, 150);
+        bufferContext.restore();
+        bufferContext.textAlign = 'right';
+        bufferContext.fillText('Move gears around', canvasWidth / 2 - 20, canvasHeight / 2 - 50);
+        bufferContext.fillText('Move map around', canvasWidth / 2 - 20, canvasHeight / 2 - 20);
+        bufferContext.fillText('Access menu', canvasWidth / 2 - 20, canvasHeight / 2 + 10);
+        bufferContext.textAlign = 'left';
+        bufferContext.fillText('click with [left mouse button]', canvasWidth / 2 + 20, canvasHeight / 2 - 50);
+        bufferContext.fillText('drag with [right mouse button]', canvasWidth / 2 + 20, canvasHeight / 2 - 20);
+        bufferContext.fillText('[esc]', canvasWidth / 2 + 20, canvasHeight / 2 + 10);
+        bufferContext.textAlign = 'center';
+        bufferContext.fillText('It is possible to stack smaller gears on larger ones.', canvasWidth / 2, canvasHeight / 2 + 50);
+      }
+      bufferContext.save();
+      bufferContext.globalAlpha = 0.5;
+      if (helpOpened || (Input.mouseX > canvasWidth - 83 && Input.mouseX < canvasWidth - 10 &&
+          Input.mouseY > 100 && Input.mouseY < 172)) {
+        bufferContext.globalAlpha = 1;
+      }
+      bufferContext.drawImage(helpImage, canvasWidth - 83, 100);
+      bufferContext.restore();
     }
     if (playRotations != null) {
       bufferContext.save();
@@ -246,13 +416,13 @@ class GameStateChallenge extends GameState {
       bufferContext.restore();
     }
     if (currentLevel.challengeTargetsMet) {
-      if (currentChallenge <= 8) {
+      if (currentChallenge < 8) {
         bufferContext.textAlign = 'center';
         bufferContext.font = '50px "Bree Serif"';
         bufferContext.fillStyle = '#000000';
-        bufferContext.fillText('Challenge won! :)', canvasWidth / 2, canvasHeight / 2 - 50);
+        bufferContext.fillText('Challenge won!', canvasWidth / 2, canvasHeight / 2 - 50);
         bufferContext.font = '30px "Bree Serif"';
-        bufferContext.fillText('Click anywhere for another one.', canvasWidth / 2, canvasHeight / 2 + 50);
+        bufferContext.fillText('Click to continue.', canvasWidth / 2, canvasHeight / 2 + 50);
       } else {
         bufferContext.font = '80px "Bree Serif"';
         bufferContext.textAlign = 'center';
@@ -264,6 +434,50 @@ class GameStateChallenge extends GameState {
     } else {
       bufferContext.drawImage(playImage, canvasWidth - 124, 10);
     }
+    bufferContext.textAlign = 'left';
+    bufferContext.font = '50px "Bree Serif"';
+    bufferContext.fillStyle = '#000000';
+    bufferContext.fillText('Challenge ${currentChallenge}', 20, 60);
+  }
+
+}
+
+class GameStateCredits extends GameState {
+
+  void update(num time) {
+    if (Input.leftMouseDown) {
+      gameState = new GameStateMenu();
+      Input.leftMouseDown = false;
+    }
+  }
+
+  void draw() {
+    bufferContext.textAlign = 'center';
+    bufferContext.font = '60px "Bree Serif"';
+    bufferContext.fillStyle = '#444444';
+    bufferContext.fillText('Sounds of Samos', canvasWidth / 2, canvasHeight / 2 - 180);
+    bufferContext.textAlign = 'right';
+    bufferContext.font = '20px "Bree Serif"';
+    bufferContext.fillStyle = '#000000';
+    bufferContext.fillText('Programming, graphics & sound', canvasWidth / 2 - 20, canvasHeight / 2 - 70);
+    bufferContext.font = '20px "Bree Serif"';
+    bufferContext.fillText('Font', canvasWidth / 2 - 20, canvasHeight / 2 - 30);
+    bufferContext.font = '20px "Bree Serif"';
+    bufferContext.fillText('Technology', canvasWidth / 2 - 20, canvasHeight / 2 + 10);
+    bufferContext.font = '20px "Bree Serif"';
+    bufferContext.fillText('Special thanks to', canvasWidth / 2 - 20, canvasHeight / 2 + 70);
+    bufferContext.textAlign = 'left';
+    bufferContext.font = '20px "Bree Serif"';
+    bufferContext.fillText('phi', canvasWidth / 2 + 20, canvasHeight / 2 - 70);
+    bufferContext.font = '20px "Bree Serif"';
+    bufferContext.fillText('Bree Serif by TypeTogether', canvasWidth / 2 + 20, canvasHeight / 2 - 30);
+    bufferContext.font = '20px "Bree Serif"';
+    bufferContext.fillText('HTML5 & Dart', canvasWidth / 2 + 20, canvasHeight / 2 + 10);
+    bufferContext.font = '20px "Bree Serif"';
+    bufferContext.fillText('you, for playing <3', canvasWidth / 2 + 20, canvasHeight / 2 + 70);
+    bufferContext.textAlign = 'center';
+    bufferContext.font = '20px "Bree Serif"';
+    bufferContext.fillText('Click to continue.', canvasWidth / 2, canvasHeight / 2 + 150);
   }
 
 }
@@ -317,6 +531,7 @@ class MenuButton {
         Input.mouseY >= positionY + canvasHeight / 2 && Input.mouseY < positionY + height + canvasHeight / 2) {
       if (Input.leftMouseDown) {
         pressed = true;
+        Input.leftMouseDown = false;
       } else {
         hovered = true;
       }
