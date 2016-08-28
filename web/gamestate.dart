@@ -122,7 +122,7 @@ class GameStateFreestyle extends GameState {
     resumeButton = new MenuButton(-200, -60, 400, 50, '#888888', '#555555', '#CCCCCC', 'Resume');
     returnButton = new MenuButton(-200, 10, 400, 50, '#888888', '#555555', '#CCCCCC', 'Return to menu');
     menuOpened = false;
-    helpOpened = false;
+    helpOpened = true;
     helpImage = Resources.images['help'];
   }
 
@@ -181,22 +181,24 @@ class GameStateFreestyle extends GameState {
           bufferContext.fillText('Throw unneeded gears in the trash.', canvasWidth - 50, canvasHeight - 110);
         }
         bufferContext.textAlign = 'right';
-        bufferContext.fillText('Click the question mark to hide the hints again.', canvasWidth - 100, 50);
+        bufferContext.fillText('Click the question mark to show/hide these hints.', canvasWidth - 100, 50);
         bufferContext.save();
         bufferContext.globalAlpha = 0.7;
         bufferContext.fillStyle = '#FFFFFF';
-        bufferContext.fillRect(canvasWidth / 2 - 320, canvasHeight / 2 - 80, 640, 150);
+        bufferContext.fillRect(canvasWidth / 2 - 250, canvasHeight / 2 - 110, 500, 220);
         bufferContext.restore();
         bufferContext.textAlign = 'right';
-        bufferContext.fillText('Move gears around', canvasWidth / 2 - 20, canvasHeight / 2 - 50);
-        bufferContext.fillText('Move map around', canvasWidth / 2 - 20, canvasHeight / 2 - 20);
-        bufferContext.fillText('Access menu', canvasWidth / 2 - 20, canvasHeight / 2 + 10);
+        bufferContext.fillText('Move gears around', canvasWidth / 2 - 20, canvasHeight / 2 - 70);
+        bufferContext.fillText('Move map around', canvasWidth / 2 - 20, canvasHeight / 2 - 40);
+        bufferContext.fillText('Access menu', canvasWidth / 2 - 20, canvasHeight / 2 - 10);
         bufferContext.textAlign = 'left';
-        bufferContext.fillText('click with [left mouse button]', canvasWidth / 2 + 20, canvasHeight / 2 - 50);
-        bufferContext.fillText('drag with [right mouse button]', canvasWidth / 2 + 20, canvasHeight / 2 - 20);
-        bufferContext.fillText('[esc]', canvasWidth / 2 + 20, canvasHeight / 2 + 10);
+        bufferContext.fillText('[left mouse button]', canvasWidth / 2 + 20, canvasHeight / 2 - 70);
+        bufferContext.fillText('[right mouse button]', canvasWidth / 2 + 20, canvasHeight / 2 - 40);
+        bufferContext.fillText('[esc]', canvasWidth / 2 + 20, canvasHeight / 2 - 10);
         bufferContext.textAlign = 'center';
-        bufferContext.fillText('It is possible to stack smaller gears on larger ones.', canvasWidth / 2, canvasHeight / 2 + 50);
+        bufferContext.fillText('It is possible to stack smaller gears on larger ones.', canvasWidth / 2, canvasHeight / 2 + 30);
+        bufferContext.fillText('The sound of an instrument depends on', canvasWidth / 2, canvasHeight / 2 + 60);
+        bufferContext.fillText('the rotational direction of its gear.', canvasWidth / 2, canvasHeight / 2 + 80);
       }
       bufferContext.save();
       bufferContext.globalAlpha = 0.5;
@@ -220,7 +222,6 @@ class GameStateChallenge extends GameState {
   ImageElement helpImage;
   ImageElement playImage;
   List<num> playRotations;
-  bool won;
 
   GameStateChallenge() {
     currentLevel = new Level(true);
@@ -229,64 +230,97 @@ class GameStateChallenge extends GameState {
     resumeButton = new MenuButton(-200, -60, 400, 50, '#888888', '#555555', '#CCCCCC', 'Resume');
     returnButton = new MenuButton(-200, 10, 400, 50, '#888888', '#555555', '#CCCCCC', 'Return to menu');
     menuOpened = false;
-    helpOpened = false;
+    helpOpened = true;
     helpImage = Resources.images['help'];
     playImage = Resources.images['play'];
-    won = false;
   }
 
   void newChallenge() {
     currentChallenge++;
-    if (currentChallenge >= 9) {
-      won = true;
-    } else {
-      currentLevel.challengeTargets = new List<ChallengeTarget>();
-      switch (currentChallenge) {
-        case 1:
-          currentLevel.looseGears.add(new Instrument('chord', 300, 100));
-          currentLevel.challengeTargets.add(new ChallengeTarget('chord', -0.005));
-          break;
-        case 2:
-          currentLevel.looseGears.add(new Instrument('chord', 300, 100));
-          currentLevel.challengeTargets.add(new ChallengeTarget('chord', 0.005));
-          break;
-        case 3:
-          currentLevel.looseGears.add(new Instrument('chord', 300, 100));
-          currentLevel.looseGears.add(new Instrument('chord', -300, 100));
-          currentLevel.challengeTargets.add(new ChallengeTarget('chord', 0.005));
-          currentLevel.challengeTargets.add(new ChallengeTarget('chord', -0.005, 0.5));
-          break;
-        case 4:
-          currentLevel.looseGears.add(new Instrument('chord', 300, 100));
-          currentLevel.looseGears.add(new Instrument('chord', -300, 100));
-          currentLevel.challengeTargets.add(new ChallengeTarget('chord', 0.005));
-          currentLevel.challengeTargets.add(new ChallengeTarget('chord', -0.0025, 0.25));
-          break;
-        case 5:
-          currentLevel.looseGears.add(new Instrument('chord', 300, 100));
-          currentLevel.looseGears.add(new Instrument('drum', -300, -100));
-          currentLevel.challengeTargets.add(new ChallengeTarget('chord', 0.005));
-          currentLevel.challengeTargets.add(new ChallengeTarget('drum', 0.00125));
-          break;
-        case 6:
-          currentLevel.looseGears.add(new Instrument('chord', 300, 100));
-          currentLevel.looseGears.add(new Instrument('drum', -300, -100));
-          currentLevel.challengeTargets.add(new ChallengeTarget('chord', 0.0025));
-          currentLevel.challengeTargets.add(new ChallengeTarget('drum', -0.0025, 0.5));
-          break;
-        case 7:
-          currentLevel.looseGears.add(new Instrument('drum', 300, -100));
-          currentLevel.looseGears.add(new Instrument('drum', -300, -100));
-          currentLevel.challengeTargets.add(new ChallengeTarget('drum', 0.005));
-          currentLevel.challengeTargets.add(new ChallengeTarget('drum', -0.005 * 2 / 3));
-          break;
-        case 8:
-          currentLevel.looseGears.add(new Instrument('chord', 300, 100));
-          currentLevel.looseGears.add(new Instrument('drum', -300, -100));
-          currentLevel.challengeTargets.add(new ChallengeTarget('chord', 0.005));
-          currentLevel.challengeTargets.add(new ChallengeTarget('drum', -0.005 / 3));
-          break;
-      }
+    currentLevel.challengeTargets = new List<ChallengeTarget>();
+    switch (currentChallenge) {
+      case 1:
+        currentLevel.looseGears.add(new Instrument('chord', 300, 100));
+        currentLevel.challengeTargets.add(new ChallengeTarget('chord', -0.005));
+        break;
+      case 2:
+        currentLevel.looseGears.add(new Instrument('chord', 300, 100));
+        currentLevel.challengeTargets.add(new ChallengeTarget('chord', 0.005));
+        break;
+      case 3:
+        currentLevel.looseGears.add(new Instrument('chord', 300, 100));
+        currentLevel.looseGears.add(new Instrument('chord', -300, 100));
+        currentLevel.challengeTargets.add(new ChallengeTarget('chord', 0.005));
+        currentLevel.challengeTargets.add(new ChallengeTarget('chord', -0.005, 0.5));
+        break;
+      case 4:
+        currentLevel.looseGears.add(new Instrument('chord', 300, 100));
+        currentLevel.challengeTargets.add(new ChallengeTarget('chord', 0.005 / 2));
+        break;
+      case 5:
+        currentLevel.looseGears.add(new Instrument('chord', 300, 100));
+        currentLevel.looseGears.add(new Instrument('chord', -300, 100));
+        currentLevel.challengeTargets.add(new ChallengeTarget('chord', 0.005));
+        currentLevel.challengeTargets.add(new ChallengeTarget('chord', -0.005 / 2, 0.25));
+        break;
+      case 6:
+        currentLevel.looseGears.add(new Instrument('chord', 300, 100));
+        currentLevel.looseGears.add(new Instrument('drum', -300, -100));
+        currentLevel.challengeTargets.add(new ChallengeTarget('chord', 0.005));
+        currentLevel.challengeTargets.add(new ChallengeTarget('drum', 0.005 / 4));
+        break;
+      case 7:
+        currentLevel.looseGears.add(new Instrument('chord', 300, 100));
+        currentLevel.looseGears.add(new Instrument('drum', -300, -100));
+        currentLevel.challengeTargets.add(new ChallengeTarget('chord', 0.005 / 2));
+        currentLevel.challengeTargets.add(new ChallengeTarget('drum', -0.005 / 2, 0.5));
+        break;
+      case 8:
+        currentLevel.looseGears.add(new Instrument('box', 300, -100));
+        currentLevel.challengeTargets.add(new ChallengeTarget('box', 0.005 * 5 / 8));
+        break;
+      case 9:
+        currentLevel.looseGears.add(new Instrument('box', 300, -100));
+        currentLevel.looseGears.add(new Instrument('box', -300, 100));
+        currentLevel.challengeTargets.add(new ChallengeTarget('box', -0.005 * 5 / 8));
+        currentLevel.challengeTargets.add(new ChallengeTarget('box', 0.005 * 5 / 16));
+        break;
+      case 10:
+        currentLevel.looseGears.add(new Instrument('drum', 300, -100));
+        currentLevel.looseGears.add(new Instrument('drum', -300, -100));
+        currentLevel.challengeTargets.add(new ChallengeTarget('drum', 0.005));
+        currentLevel.challengeTargets.add(new ChallengeTarget('drum', -0.005 * 2 / 3));
+        break;
+      case 11:
+        currentLevel.looseGears.add(new Instrument('chord', 300, 100));
+        currentLevel.looseGears.add(new Instrument('drum', -300, -100));
+        currentLevel.challengeTargets.add(new ChallengeTarget('chord', 0.005));
+        currentLevel.challengeTargets.add(new ChallengeTarget('drum', -0.005 / 3));
+        break;
+      case 12:
+        currentLevel.looseGears.add(new Instrument('chord', 300, -100));
+        currentLevel.looseGears.add(new Instrument('box', -300, 100));
+        currentLevel.challengeTargets.add(new ChallengeTarget('chord', 0.005 * 3 / 8));
+        currentLevel.challengeTargets.add(new ChallengeTarget('box', -0.005 * 5 / 8));
+        break;
+      case 13:
+        currentLevel.looseGears.add(new Instrument('chord', 300, -100));
+        currentLevel.looseGears.add(new Instrument('chord', 300, 100));
+        currentLevel.looseGears.add(new Instrument('box', -300, 100));
+        currentLevel.challengeTargets.add(new ChallengeTarget('chord', -0.005));
+        currentLevel.challengeTargets.add(new ChallengeTarget('chord', 0.005 / 4, 0.125));
+        currentLevel.challengeTargets.add(new ChallengeTarget('box', 0.005 * 5 / 8));
+        break;
+      case 14:
+        currentLevel.looseGears.add(new Instrument('chord', 300, -100));
+        currentLevel.looseGears.add(new Instrument('chord', 300, 100));
+        currentLevel.looseGears.add(new Instrument('box', -300, 100));
+        currentLevel.looseGears.add(new Instrument('drum', -300, -100));
+        currentLevel.challengeTargets.add(new ChallengeTarget('chord', 0.005));
+        currentLevel.challengeTargets.add(new ChallengeTarget('chord', -0.005 * 5 / 16, 0.125));
+        currentLevel.challengeTargets.add(new ChallengeTarget('box', 0.005 * 15 / 64));
+        currentLevel.challengeTargets.add(new ChallengeTarget('drum', -0.005 / 3));
+        break;
     }
   }
 
@@ -330,7 +364,7 @@ class GameStateChallenge extends GameState {
         }
       } else {
         if (currentLevel.challengeTargetsMet) {
-          if (currentChallenge < 8 && Input.leftMouseDown) {
+          if (currentChallenge < 14 && Input.leftMouseDown) {
             currentLevel = new Level(true);
             newChallenge();
             Input.leftMouseDown = false;
@@ -382,22 +416,24 @@ class GameStateChallenge extends GameState {
         bufferContext.textAlign = 'right';
         bufferContext.fillText('Listen to the rhythm you\'re trying to replicate.', canvasWidth - 140, 50);
         bufferContext.textAlign = 'right';
-        bufferContext.fillText('Click the question mark to hide the hints again.', canvasWidth - 100, 140);
+        bufferContext.fillText('Click the question mark to show/hide these hints.', canvasWidth - 100, 140);
         bufferContext.save();
         bufferContext.globalAlpha = 0.7;
         bufferContext.fillStyle = '#FFFFFF';
-        bufferContext.fillRect(canvasWidth / 2 - 320, canvasHeight / 2 - 80, 640, 150);
+        bufferContext.fillRect(canvasWidth / 2 - 250, canvasHeight / 2 - 110, 500, 220);
         bufferContext.restore();
         bufferContext.textAlign = 'right';
-        bufferContext.fillText('Move gears around', canvasWidth / 2 - 20, canvasHeight / 2 - 50);
-        bufferContext.fillText('Move map around', canvasWidth / 2 - 20, canvasHeight / 2 - 20);
-        bufferContext.fillText('Access menu', canvasWidth / 2 - 20, canvasHeight / 2 + 10);
+        bufferContext.fillText('Move gears around', canvasWidth / 2 - 20, canvasHeight / 2 - 70);
+        bufferContext.fillText('Move map around', canvasWidth / 2 - 20, canvasHeight / 2 - 40);
+        bufferContext.fillText('Access menu', canvasWidth / 2 - 20, canvasHeight / 2 - 10);
         bufferContext.textAlign = 'left';
-        bufferContext.fillText('click with [left mouse button]', canvasWidth / 2 + 20, canvasHeight / 2 - 50);
-        bufferContext.fillText('drag with [right mouse button]', canvasWidth / 2 + 20, canvasHeight / 2 - 20);
-        bufferContext.fillText('[esc]', canvasWidth / 2 + 20, canvasHeight / 2 + 10);
+        bufferContext.fillText('[left mouse button]', canvasWidth / 2 + 20, canvasHeight / 2 - 70);
+        bufferContext.fillText('[right mouse button]', canvasWidth / 2 + 20, canvasHeight / 2 - 40);
+        bufferContext.fillText('[esc]', canvasWidth / 2 + 20, canvasHeight / 2 - 10);
         bufferContext.textAlign = 'center';
-        bufferContext.fillText('It is possible to stack smaller gears on larger ones.', canvasWidth / 2, canvasHeight / 2 + 50);
+        bufferContext.fillText('It is possible to stack smaller gears on larger ones.', canvasWidth / 2, canvasHeight / 2 + 30);
+        bufferContext.fillText('The sound of an instrument depends on', canvasWidth / 2, canvasHeight / 2 + 60);
+        bufferContext.fillText('the rotational direction of its gear.', canvasWidth / 2, canvasHeight / 2 + 80);
       }
       bufferContext.save();
       bufferContext.globalAlpha = 0.5;
@@ -416,7 +452,7 @@ class GameStateChallenge extends GameState {
       bufferContext.restore();
     }
     if (currentLevel.challengeTargetsMet) {
-      if (currentChallenge < 8) {
+      if (currentChallenge < 14) {
         bufferContext.textAlign = 'center';
         bufferContext.font = '50px "Bree Serif"';
         bufferContext.fillStyle = '#000000';
@@ -432,7 +468,14 @@ class GameStateChallenge extends GameState {
         bufferContext.fillText('Good job!', canvasWidth / 2, canvasHeight / 2 + 50);
       }
     } else {
+      bufferContext.save();
+      bufferContext.globalAlpha = 0.5;
+      if (playRotations != null || (Input.mouseX > canvasWidth - 124 && Input.mouseX < canvasWidth - 10 &&
+          Input.mouseY > 10 && Input.mouseY < 83)) {
+        bufferContext.globalAlpha = 1;
+      }
       bufferContext.drawImage(playImage, canvasWidth - 124, 10);
+      bufferContext.restore();
     }
     bufferContext.textAlign = 'left';
     bufferContext.font = '50px "Bree Serif"';

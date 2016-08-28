@@ -11,7 +11,7 @@ class Gear {
   List<Gear> gluedGears;
   List<Gear> connectedGears;
   int highlight;
-  ImageElement image;
+  List<ImageElement> images;
   num imageCenterX, imageCenterY;
 
   Gear(this.number, this.positionX, this.positionY) {
@@ -21,7 +21,10 @@ class Gear {
     gluedGears = new List<Gear>();
     connectedGears = new List<Gear>();
     highlight = 0;
-    image = Resources.images['gear_${number}'];
+    images = new List<ImageElement>();
+    images.add(Resources.images['gear_${number}']);
+    images.add(Resources.images['gear_${number}_green']);
+    images.add(Resources.images['gear_${number}_blue']);
     switch (number) {
       case 4:
         imageCenterX = 38;
@@ -200,16 +203,14 @@ class Gear {
 
   void draw() {
     bufferContext.save();
-    switch (highlight) {
-      case 1:
-        bufferContext.globalAlpha = 0.5;
-        break;
-      case 2:
-        bufferContext.globalAlpha = 0.2;
-    }
     bufferContext.translate(positionX + currentLevel.offsetX, positionY + currentLevel.offsetY);
     bufferContext.rotate(rotation);
-    bufferContext.drawImage(image, -imageCenterX, -imageCenterY);
+    if (highlight == -1) {
+      bufferContext.globalAlpha = 0.5;
+      bufferContext.drawImage(images[0], -imageCenterX, -imageCenterY);
+    } else {
+      bufferContext.drawImage(images[highlight], -imageCenterX, -imageCenterY);
+    }
     bufferContext.restore();
     drawMore();
     for (int i = 0; i < gluedGears.length; i++) {

@@ -89,10 +89,13 @@ class Level {
         gluable = looseGears[i].getGluableGear(placingGear);
       }*/
       if (gluable != null && gluable.number > placingGear.number + 1 && gluable.gluedGears.length == 0) {
-        if (Input.leftMouseDown) {
+        if (!Input.leftMouseDown) {
           gluable.glue(placingGear);
           placingGear = null;
-          Input.leftMouseDown = false;
+          if (challenge) {
+            checkChallengeTargets();
+          }
+          //Input.leftMouseDown = false;
         } else {
           gluable.highlight = 2;
         }
@@ -108,7 +111,7 @@ class Level {
           for (int i = 0; i < looseGears.length && loose == null; i++) {
             loose = looseGears[i].getConnectableGear(placingGear);
           }
-          if (Input.leftMouseDown) {
+          if (!Input.leftMouseDown) {
             connectable.connect(placingGear);
             if (loose != null) {
               placingGear.connect(loose);
@@ -118,24 +121,27 @@ class Level {
             if (challenge) {
               checkChallengeTargets();
             }
-            Input.leftMouseDown = false;
+            //Input.leftMouseDown = false;
           } else {
             connectable.highlight = 1;
             if (loose != null) {
               loose.highlight = 1;
             }
           }
-        } else if (Input.leftMouseDown) {
+        } else if (!Input.leftMouseDown) {
           looseGears.add(placingGear);
           placingGear = null;
-          Input.leftMouseDown = false;
+          //Input.leftMouseDown = false;
         }
       }
     } else {
       // removing gears
-      Gear intersecting = motorGear.getIntersectingGear(Input.mouseX - offsetX, Input.mouseY - offsetY);
+      Gear intersecting;
       for (int i = 0; i < looseGears.length && intersecting == null; i++) {
         intersecting = looseGears[i].getIntersectingGear(Input.mouseX - offsetX, Input.mouseY - offsetY);
+      }
+      if (intersecting == null) {
+        intersecting = motorGear.getIntersectingGear(Input.mouseX - offsetX, Input.mouseY - offsetY);
       }
       if (intersecting != null && intersecting != motorGear) {
         if (Input.leftMouseDown) {
@@ -156,9 +162,9 @@ class Level {
           if (challenge) {
             checkChallengeTargets();
           }
-          Input.leftMouseDown = false;
+          //Input.leftMouseDown = false;
         } else {
-          intersecting.highlight = 1;
+          intersecting.highlight = -1;
         }
       }
     }
@@ -238,9 +244,9 @@ class GearButton {
     if (Input.mouseX >= positionX - size && Input.mouseX < positionX + size &&
         Input.mouseY >= positionY - size && Input.mouseY < positionY + size) {
       highlight = true;
-      if (Input.leftMouseDown) {
+      if (Input.leftMouseDown && currentLevel.placingGear == null) {
         currentLevel.placingGear = new Gear(number, Input.mouseX, Input.mouseY);
-        Input.leftMouseDown = false;
+        //Input.leftMouseDown = false;
       }
     } else {
       highlight = false;
@@ -282,9 +288,9 @@ class InstrumentButton {
     if (Input.mouseX >= canvasWidth - positionX - size && Input.mouseX < canvasWidth - positionX + size &&
         Input.mouseY >= positionY - size && Input.mouseY < positionY + size) {
       highlight = true;
-      if (Input.leftMouseDown) {
+      if (Input.leftMouseDown && currentLevel.placingGear == null) {
         currentLevel.placingGear = new Instrument(type, Input.mouseX, Input.mouseY);
-        Input.leftMouseDown = false;
+        //Input.leftMouseDown = false;
       }
     } else {
       highlight = false;
@@ -317,12 +323,12 @@ class GearTrash {
   }
 
   void update() {
-    if (currentLevel.placingGear != null && Input.leftMouseDown &&
+    if (currentLevel.placingGear != null && !Input.leftMouseDown &&
         Input.mouseX >= positionX && Input.mouseX < positionX + 143 &&
         Input.mouseY >= positionY && Input.mouseY < positionY + 198) {
       currentLevel.placingGear = null;
       currentLevel.resetHighlights();
-      Input.leftMouseDown = false;
+      //Input.leftMouseDown = false;
     }
   }
 

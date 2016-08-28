@@ -15,9 +15,17 @@ class Resources {
     loadImage('temple');
     loadImage('squares');
     loadImage('gear_4');
+    loadImage('gear_4_green');
+    loadImage('gear_4_blue');
     loadImage('gear_5');
+    loadImage('gear_5_green');
+    loadImage('gear_5_blue');
     loadImage('gear_6');
+    loadImage('gear_6_green');
+    loadImage('gear_6_blue');
     loadImage('gear_8');
+    loadImage('gear_8_green');
+    loadImage('gear_8_blue');
     loadImage('chord');
     loadImage('drum');
     loadImage('box');
